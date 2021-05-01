@@ -29,6 +29,18 @@ function getTweets() {
   });
 }
 
+function postTweet(tweet) {
+  T.post("statuses/update", tweet, (err, data) => {
+    if (err) {
+      console.log(err);
+      console.log("Something went wrong!");
+      return;
+    }
+
+    console.log("Tweeted!!");
+  });
+}
+
 function getFollowers() {
   T.get("followers/list", (err, data) => {
     if (err) {
@@ -44,3 +56,27 @@ function getFollowers() {
     }
   });
 }
+
+function getSampleStreamStatus() {
+  const stream = T.stream("statuses/sample");
+
+  stream.on("tweet", (tweet) => {
+    console.log(tweet.text);
+  });
+}
+
+function getFilteredStreamStatus(param) {
+  const stream = T.stream("statuses/filter", param);
+
+  stream.on("tweet", (tweet) => {
+    console.log(tweet);
+    console.log(tweet.text);
+
+    postTweet({ status: tweet.text });
+  });
+}
+
+const tweet = {
+  track: "khattakdev",
+};
+getFilteredStreamStatus(tweet);
